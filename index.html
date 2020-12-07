@@ -1,0 +1,404 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>I have no spoons and I must survive in a capitalist society</title>
+	<script type="text/javascript" src="js/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, render:render, update: update });
+    var barMood;
+    var barFill;
+    var windowsmall;
+    var txtwindowsmall;
+    var windowbig;
+    var txtwindowbig;
+    var actualtxtwindowsmall = "A new day...";
+    var randomtxt;
+    var act1txt = ["You ate a bunch of mozza sticks...\nNot the best meal...", "You ate a bag of M&M's...\nYou're not feeling well", "You ate two blocks of instant \nnoodles.Not the most nourishing meal..."];
+    var act2txt = ["You ate some fried rice with \nfresh vegetables. Yum yum!", "You made some lasagnas stuffed with spinach and \ngoat cheese. Astonishing!", "Quinoa and marinated cucumber \nand mushrooms?Fabulous!"];
+    var act3txt = ["One more day at work...\nYay...", "Coworkers being asshats again.\nAwesome...", "Great, your homophobic boss yelled at \nyou again. What a great day..."];
+    var act4txt = ["You worked a lot today.\n But it's not over yet...", "One more work session and it's done!\nLet's keep up!", "You finished your homework!\nAwesome!"];
+    var act5txt = ["You died several times playing Dork Souls.\nStory of your life...", "You started playing Bass Effect.\nA... fishing game in space???", "You tried the latest Alone in the Dork.\nAlone in the Dork... Uhuhuh..."];
+    var act6txt = ["You joined some friends at the bar next door.\nTHAT WAS GREAT AND NOW YOU'RE DRUNK", "You went to the movie theater with \nyour girlfriend. <3 <3 <3 <3 <3", "You went to the bubble tea with your best \nfriends! Tapioca pearls and chill UwU"];
+    var act7txt = ["Refreshing UwU"];
+    var act8txt = ["Good night...", "Nighty nighty...", "So sleepy Zzzzzzz"];
+    var button1;
+    var button2;
+    var button3;
+    var button4;
+    var button5;
+    var button6;
+    var button7;
+    var button8;
+    var txtPA;
+    var txtDay;
+    var mood = 70;
+    var ancientmood = mood;
+    var diffmood;
+    var txtdiffmood;
+    var PA = mood / 10;
+    var ancientPA = PA;
+    var diffPA;
+    var txtdiffPA;
+    var oldPa;
+    var didEat = 0;
+    var homework = 0;
+    var txthomework;
+    var jobLost = false;
+    var didWork = false;
+    var txtjoblost;
+    var playgames = false;
+    var updateBar = false;
+    var canClick = true;
+    var endScreen = false;
+    var clearScreen = false;
+    var gameover = false;
+    var day = 1;
+    var timer = 0;
+    var dayStr = "Friday";
+    var gameStart = false;
+    
+    var menuscreen;
+    var txtmenuscreen;
+    var startbutton;
+    var howtobutton;
+
+    function preload() {
+        game.load.image('bkg', 'assets/background.png');
+        game.load.image('spoon', 'assets/spoon.png');
+        game.load.image('windowsmall', 'assets/windowsmall.png');
+        game.load.image('windowbig', 'assets/windowbig.png');
+        game.load.image('button1', 'assets/button1.png');
+        game.load.image('button2', 'assets/button2.png');
+        game.load.image('button3', 'assets/button3.png');
+        game.load.image('button4', 'assets/button4.png');
+        game.load.image('button5', 'assets/button5.png');
+        game.load.image('button6', 'assets/button6.png');
+        game.load.image('button7', 'assets/button7.png');
+        game.load.image('button8', 'assets/button8.png');
+        game.load.image('buttonstart', 'assets/buttonstart.png');
+        game.load.image('buttonhowto', 'assets/buttonhowto.png');
+    }
+
+    function create() {
+        CreateLevel();
+        menuscreen = game.add.sprite(game.world.centerX, game.world.centerY, 'bkg');
+        menuscreen.anchor.setTo(0.5, 0.5);
+        txtmenuscreen = game.add.text(10,30, "I HAVE NO SPOONS\nAND I MUST SURVIVE\nIN A CAPITALIST \nSOCIETY", {font: "72px Arial", fill: "#ff0044", align: "left"});
+        startbutton = game.add.button(500, 400, 'buttonstart', buttonstartact, this);
+        howtobutton = game.add.button(500, 500, 'buttonhowto', buttonhowtoact, this);
+    }
+
+    function CreateLevel(){
+        var bkg = game.add.sprite(game.world.centerX, game.world.centerY, 'bkg');
+        bkg.anchor.setTo(0.5, 0.5);
+        var spoon = game.add.sprite(50, game.world.centerY-100,'spoon');
+        var txtMood = game.add.text(10,10, "Mood: ", {font: "24px Arial", fill: "#ff0044", align: "center"});
+        barMood = new Phaser.Rectangle(100,10, mood*2, 30);
+        barFill = new Phaser.Rectangle(100,10, 200, 30);
+        txtPA = game.add.text(600,10, "Spoons left: "+PA, {font: "24px Arial", fill: "#ff0044", align: "center"});
+        txtDay = game.add.text(game.world.centerX - 50, 10, "Day " + day + "  " + dayStr, {font: "24px Arial", fill: "#ff0044", align: "center"});
+        windowsmall = game.add.sprite(300, 100, 'windowsmall');
+        txtwindowsmall = game.add.text(310, 105, actualtxtwindowsmall,{font: "24px Calibri", fill: "#000000", align: "left"})
+        button1 = game.add.button(300, 200, 'button1', button1act, this);
+        button2 = game.add.button(550, 200, 'button2', button2act, this);
+        button3 = game.add.button(300, 300, 'button3', button3act, this);
+        button4 = game.add.button(550, 300, 'button4', button4act, this);
+        button5 = game.add.button(300, 400, 'button5', button5act, this);
+        button6 = game.add.button(550, 400, 'button6', button6act, this);
+        button7 = game.add.button(300, 500, 'button7', button7act, this);
+        button8 = game.add.button(550, 500, 'button8', button8act, this);
+    }
+
+    function update() {
+        if(mood <= 0){
+            gameover = true;
+        }
+        if(didEat >= 2){
+            gameover = true;
+        }
+        if (canClick == false && endScreen == false && day > 10){
+            windowbig = game.add.button(50, 50, "windowbig", windowbigact, this);
+            txtwindowbig = game.add.text(70,70, "",{font: "36px Calibri", fill: "#000000", align: "left"})
+            if(jobLost == false && homework >= 3){
+                txtwindowbig.setText("You kept your job and you finished\nyour homework!\nAnd you didn't starve to death!\n\nAwesome!\n\nYou're a great little spoon!\nKeep up the good work!")
+            }else if(jobLost && homework >= 3){
+                txtwindowbig.setText("You finished your homework!\nBut you lost your job...\n\nIt's ok little spoon! You tried your best!\n\nRest a bit and drink some water! We support you! è_é7")
+            }else if(jobLost == false && homework < 3){
+                txtwindowbig.setText("You kept your job!\nBut you didn't finish your homework...\n\nIt's ok little spoon! You tried your best!\n\nRest a bit and drink some water! We support you! è_é7")
+            }else if(jobLost && homework < 3){
+                txtwindowbig.setText("That... wasn't a good week.\n\nYou lost your job and didn't finish your homework.\n\nIt's ok little spoon! It happens.\nYou did your best, and it's already great!\n\nTake some rest and drink some water! We support you! è_é7")
+            }
+        }
+        else if (canClick == false && endScreen == false && gameover){
+            windowbig = game.add.button(50, 50, "windowbig", windowbigact, this);
+            txtwindowbig = game.add.text(70,70, "",{font: "36px Calibri", fill: "#000000", align: "left"})
+            if(mood <= 0){
+                txtwindowbig.setText("Oh no! Little spoon has no energy left! T_T\n\nIt's ok little spoon: rest a bit and drink water.\n\nAfter a few days you'll be back on track!\n\nAnd don't forget: we support you! è_é7")
+            }else{
+                txtwindowbig.setText("Everybody needs to eat, even little spoons...\n\nAfter not eating for two days, you just starved\nto death.\n\nDon't forget to eat next time! T_T")
+            }
+        }
+        else if (canClick == false && endScreen == false){
+            timer += game.time.elapsed/1000;
+            if (timer >1){
+                endScreen = true;
+                timer = 0;
+                windowbig = game.add.button(50, 50, "windowbig", windowbigact, this);
+                txtwindowbig = game.add.text(70,70, "",{font: "36px Calibri", fill: "#000000", align: "left"})
+            }
+        }
+        else if (canClick == false && endScreen){
+            timer += game.time.elapsed/1000;
+            diffmood = mood - ancientmood;
+            diffPA = PA - ancientPA;
+            if(timer >= 2.5){
+                txtwindowbig.setText("End of day " +(day -1) +  "\n\n"+ txtdiffPA +  "\n\n" + txtjoblost + "\n\n" + txthomework + "\n\nClick to continue");
+                clearScreen = true;
+            }
+            else if(timer>= 2){
+                if(homework <= 2){
+                    txthomework = "Your homework is far from being finished.";
+                }else if(homework == 3 || homework == 4){
+                    txthomework = "You almost finished your homework.";
+                }else{
+                    txthomework = "You finished your homework."
+                }
+                txtwindowbig.setText("End of day " +(day -1) + "\n\n"+ txtdiffPA + "\n\n" + txtjoblost + "\n\n" + txthomework);
+            }
+            else if(timer>= 1.5){
+                if(jobLost){
+                    txtjoblost = "You lost your job.";
+                    button3.pendingDestroy = true;
+                }else{
+                    txtjoblost = "You still have your job.";
+                }
+                txtwindowbig.setText("End of day " +(day -1) + "\n\n"+ txtdiffPA + "\n\n" + txtjoblost);
+            }
+            else if(timer >= 1){
+                if(diffPA == 0){
+                    txtdiffPA = "+- 0 Spoons";
+                }else{
+                    txtdiffPA = diffPA + " Spoons";
+                }
+                txtwindowbig.setText("End of day " +(day -1) + "\n\n"+ txtdiffPA);
+            }
+            /*else if(timer >= 1){
+                if(diffmood == 0){
+                    txtdiffmood = "+- 0 Mood";
+                }else{
+                    txtdiffmood = diffmood + " Mood";
+                }
+                txtwindowbig.setText("End of day " +day + "\n"+ txtdiffmood);
+            }*/
+            else if(timer >= 0.5){
+                txtwindowbig.setText("End of day " +(day -1));
+            }
+        }
+        if (PA > 10){
+            PA = 10;
+        }
+        if (PA < 0){
+            button8act();
+        }
+        if (mood > 100){
+            mood = 100;
+        }
+        txtPA.setText("Spoons left: " + PA);
+        switch(day){
+            case 1:
+            case 8:
+                dayStr = "Friday";
+                break;
+            case 2:
+            case 9:
+                dayStr = "Saturday";
+                break;
+            case 3:
+            case 10:
+                dayStr = "Sunday";
+                break;
+            case 4:
+                dayStr = "Monday";
+                break;
+            case 5:
+                dayStr = "Tuesday";
+                break;
+            case 6:
+                dayStr = "Wednesday";
+                break;
+            case 7:
+                dayStr = "Thursday";
+                break;
+        }
+        txtDay.setText("Day " + day + "  " + dayStr);
+        txtwindowsmall.setText(actualtxtwindowsmall);
+        if(updateBar){
+            updateBar = false;
+            console.log(updateBar);
+            barMood.resize(mood*2, 30);
+        }
+    }
+
+    function render(){
+        if(gameStart){
+            game.debug.geom(barFill, '#000000');
+            game.debug.geom(barMood, '#ff0044');
+        }
+    }
+
+    function button1act(){
+        if(canClick){
+            PA -= 1;
+            mood -= 10;
+            updateBar = true;
+            didEat = 0;
+            gameover = false;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act1txt[randomtxt];
+        }
+    }
+
+    function button2act(){
+        if(canClick){
+            PA -= 2;
+            mood += 20;
+            didEat = 0;
+            gameover = false;
+            updateBar = true;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act2txt[randomtxt];
+        }
+    }
+
+    function button3act(){
+        if(canClick && (day == "2" || day == "5" || day == "9") && jobLost == false){
+            PA -= 7;
+            mood -= 40;
+            updateBar = true;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act3txt[randomtxt];
+            didWork = true;
+        }
+    }
+
+    function button4act(){
+        if(canClick){
+            PA -= 5;
+            homework += 1;
+            if (homework >= 5){
+                mood += 60;
+                button4.pendingDestroy = true;
+            }
+            else{
+                mood -= 20;
+            }
+            updateBar = true;
+            actualtxtwindowsmall = act4txt[homework -1];
+        }
+    }
+
+    function button5act(){
+        if(canClick){
+            PA -= 1;
+            if(playgames){
+                mood += 5;
+            }else{
+                mood += 20;
+                playgames = true;
+            }
+            updateBar = true;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act5txt[randomtxt];
+        }
+    }
+
+    function button6act(){
+        if(canClick){
+            PA -= 5;
+            mood += 40;
+            playgames = false;
+            updateBar = true;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act6txt[randomtxt];
+        }
+    }
+
+    function button7act(){
+        if(canClick){
+            PA -= 1;
+            mood += 10;
+            updateBar = true;
+            actualtxtwindowsmall = act7txt[0];
+        }
+    }
+
+    function button8act(){
+        if(canClick){
+            canClick = false;
+            didEat += 1;
+            day += 1;
+            if (PA < 0){
+                oldPa = PA;
+                PA = mood/10 - oldPa * 2;
+                if (PA < 1){
+                    PA = 1;
+                }
+            }else{
+                PA = mood/10;
+            }
+            if ((dayStr == "Saturday" || dayStr == "Wednesday") && jobLost == false){
+                    if (didWork){
+                        didWork = false;
+                    }else{
+                        jobLost = true;
+                    }
+                }
+            updateBar = true;
+            randomtxt= Math.floor(Math.random() * 3);
+            actualtxtwindowsmall = act8txt[randomtxt];
+        }
+    }
+    
+    function windowbigact(){
+        if(clearScreen){
+            windowbig.pendingDestroy = true;
+            txtwindowbig.pendingDestroy = true;
+            //txtwindowbig.setText("");
+            clearScreen = false;
+            canClick = true;
+            endScreen = false;
+        }
+    }
+    
+    function buttonstartact(){
+        menuscreen.pendingDestroy = true;
+        txtmenuscreen.pendingDestroy = true;
+        startbutton.pendingDestroy = true;
+        howtobutton.pendingDestroy = true;
+        gameStart = true;
+    }
+    
+    function buttonhowtoact(){
+        windowbig = game.add.button(50, 50, "windowbig", buttonhowtoactdel, this);
+        txtwindowbig = game.add.text(60,70, "Hey there little spoon!\nThe goal of this game is to survive for ten days.\nYou have to eat, sleep, finish your homework, \nand go to your job (only on Wednesdays \nand Saturdays).\nYour mood determines your number of spoons: \nthe bigger your mood is, the bigger\nyour number of spoon will be.\nAnd the more spoons you have, the more \nthings you'll be able to accomplish.",{font: "36px Calibri", fill: "#000000", align: "left"})
+    }
+    
+    function buttonhowtoactdel(){
+        windowbig.pendingDestroy = true;
+        txtwindowbig.pendingDestroy = true;
+    }
+
+</script>
+
+</body>
+</html>
